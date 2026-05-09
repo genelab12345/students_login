@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Login Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg:      #0d0d2b;
+            --header:  #1a0533;
+            --header2: #2d0a5e;
+            --accent:  #7c3aed;
+            --accent2: #a855f7;
+            --btn:     #6d28d9;
+            --btnhov:  #4c1d95;
+            --white:   #ffffff;
+            --gray:    #a78bfa;
+            --light:   #f5f0ff;
+            --danger:  #c0392b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: linear-gradient(135deg, #0d0d2b 0%, #1a0533 60%, #0d1b3e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+        }
+
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.12;
+            background: var(--accent2);
+            z-index: 0;
+        }
+        body::before {
+            width: 500px; height: 500px;
+            top: -150px; right: -120px;
+        }
+        body::after {
+            width: 380px; height: 380px;
+            bottom: -100px; left: -100px;
+            background: #1e3a8a;
+        }
+
+        .page {
+            display: none;
+            width: 100%;
+            max-width: 400px;
+            position: relative;
+            z-index: 1;
+        }
+        .page.active { display: block; }
+
+        .card {
+            background: #1e1b4b;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 24px 60px rgba(109,40,217,0.3), 0 0 0 1px rgba(124,58,237,0.2);
+            animation: slideUp .45s cubic-bezier(.22,.68,0,1.2) both;
+        }
+
+        @keyframes slideUp {
+            from { opacity:0; transform: translateY(30px); }
+            to   { opacity:1; transform: translateY(0); }
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--header2), #1e3a8a);
+            padding: 28px 28px 22px;
+            text-align: center;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .school-badge {
+            width: 52px; height: 52px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 22px;
+            box-shadow: 0 4px 15px rgba(124,58,237,0.4);
+        }
+
+        .card-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            color: var(--white);
+            letter-spacing: .3px;
+            line-height: 1.2;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        .card-body { padding: 28px 26px 26px; }
+
+        label {
+            display: block;
+            font-size: 11.5px;
+            font-weight: 600;
+            letter-spacing: .8px;
+            text-transform: uppercase;
+            color: var(--accent2);
+            margin-bottom: 6px;
+            margin-top: 16px;
+        }
+        label:first-of-type { margin-top: 0; }
+
+        input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #3730a3;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14.5px;
+            color: #e0d7ff;
+            background: #16123a;
+            transition: border .2s, box-shadow .2s;
+            outline: none;
+        }
+        input::placeholder { color: #6b5fa0; }
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(124,58,237,.25);
+            background: #1e1a4a;
+        }
+        input:disabled {
+            background: #2d2a5e;
+            cursor: not-allowed;
+            color: #6b5fa0;
+        }
+
+        input[type="password"]::-ms-reveal,
+        input[type="password"]::-ms-clear,
+        input[type="password"]::-webkit-contacts-auto-fill-button,
+        input[type="password"]::-webkit-credentials-auto-fill-button {
+            display: none !important;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 13px;
+            margin-top: 22px;
+            background: linear-gradient(135deg, var(--btn), #1e3a8a);
+            color: var(--white);
+            border: none;
+            border-radius: 9px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            letter-spacing: .5px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: opacity .2s, transform .12s;
+            box-shadow: 0 4px 15px rgba(109,40,217,0.35);
+        }
+        .btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,.1) 50%, transparent 100%);
+            transform: translateX(-100%);
+            transition: transform .4s;
+        }
+        .btn:hover:not(:disabled)::after { transform: translateX(100%); }
+        .btn:hover:not(:disabled) { opacity: 0.88; }
+        .btn:active:not(:disabled) { transform: scale(.98); }
+        .btn:disabled { background: #3730a3; cursor: not-allowed; opacity: 0.5; }
+
+        .gold-bar {
+            height: 3px;
+            background: linear-gradient(90deg, #1e3a8a, var(--accent), var(--accent2), var(--accent), #1e3a8a);
+            margin-top: 20px;
+            border-radius: 2px;
+            opacity: .8;
+        }
+
+        .input-wrap { position: relative; }
+        .input-wrap input { padding-right: 44px; }
+
+        .eye-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px;
+            margin: 0;
+            width: auto;
+            display: flex;
+            align-items: center;
+            color: #6b5fa0;
+        }
+        .eye-btn:hover { color: var(--accent2); }
+        .eye-btn svg { width: 20px; height: 20px; display: block; }
+
+        #message {
+            margin-top: 14px;
+            font-size: 13.5px;
+            font-weight: 600;
+            text-align: center;
+            min-height: 20px;
+            padding: 0 4px;
+        }
+
+        /* WELCOME PAGE */
+        .welcome-card {
+            background: #1e1b4b;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 24px 60px rgba(109,40,217,0.3), 0 0 0 1px rgba(124,58,237,0.2);
+            text-align: center;
+            animation: popIn .5s cubic-bezier(.22,.68,0,1.35) both;
+        }
+
+        @keyframes popIn {
+            from { opacity:0; transform: scale(.88); }
+            to   { opacity:1; transform: scale(1); }
+        }
+
+        .welcome-header {
+            background: linear-gradient(135deg, var(--header2), #1e3a8a);
+            padding: 28px 28px 22px;
+            border-bottom: 3px solid var(--accent);
+        }
+
+        .welcome-body { padding: 36px 26px 36px; }
+
+        .welcome-icon { font-size: 52px; margin-bottom: 16px; }
+
+        .welcome-msg {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            color: var(--accent2);
+            font-weight: 700;
+        }
+
+        .welcome-sub {
+            font-size: 13px;
+            color: #a78bfa;
+            margin-top: 8px;
+        }
+
+        .btn-logout {
+            width: 100%;
+            padding: 12px;
+            margin-top: 24px;
+            background: transparent;
+            color: var(--accent2);
+            border: 1.5px solid var(--accent);
+            border-radius: 9px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background .2s, color .2s;
+        }
+        .btn-logout:hover { background: var(--btn); color: var(--white); border-color: var(--btn); }
+    </style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div class="page active" id="loginPage">
+    <div class="card">
+        <div class="card-header">
+            <div class="school-badge">🎓</div>
+            <h1>Student Login Portal</h1>
+        </div>
+        <div class="card-body">
+            <label for="username">Username</label>
+            <input type="text" id="username" placeholder="Enter your username" autocomplete="username">
+
+            <label for="password">Password</label>
+            <div class="input-wrap">
+                <input type="password" id="password" placeholder="Enter your password" autocomplete="current-password">
+                <button type="button" class="eye-btn" onclick="togglePassword()" id="eyeBtn" aria-label="Toggle password">
+                    <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                    </svg>
+                </button>
+            </div>
+
+            <button class="btn" onclick="login()" id="loginBtn">Sign In</button>
+            <div class="gold-bar"></div>
+            <p id="message"></p>
+        </div>
+    </div>
+</div>
+
+<!-- WELCOME PAGE -->
+<div class="page" id="welcomePage">
+    <div class="welcome-card">
+        <div class="welcome-header">
+            <div class="school-badge">🎓</div>
+            <h1 style="font-family:'Playfair Display',serif;font-size:20px;color:#fff;letter-spacing:.3px;text-shadow:0 1px 3px rgba(0,0,0,0.3);">Student Login Portal</h1>
+        </div>
+        <div class="welcome-body">
+            <div class="welcome-icon">✅</div>
+            <p class="welcome-msg" id="welcomeMsg"></p>
+            <p class="welcome-sub">You have successfully logged in.</p>
+            <button class="btn-logout" onclick="logout()">← Sign Out</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    var attempts    = 0;
+    var maxAttempts = 3;
+    var isLocked    = false;
+
+    var users = [
+        { user: "Genelab",  pass: "2002" },
+        { user: "admin",    pass: "1234" },
+        { user: "student1", pass: "1111" },
+        { user: "student2", pass: "2222" }
+    ];
+
+    function login() {
+        if (isLocked) return;
+
+        var inputUser = document.getElementById("username").value.trim();
+        var inputPass = document.getElementById("password").value;
+        var msg       = document.getElementById("message");
+        var matched   = null;
+
+        for (var i = 0; i < users.length; i++) {
+            if (users[i].user === inputUser && users[i].pass === inputPass) {
+                matched = users[i];
+                break;
+            }
+        }
+
+        if (matched) {
+            document.getElementById("welcomeMsg").textContent = "Welcome, " + matched.user + "!";
+            document.getElementById("loginPage").classList.remove("active");
+            document.getElementById("welcomePage").classList.add("active");
+        } else {
+            attempts++;
+            var remaining = maxAttempts - attempts;
+
+            if (attempts >= maxAttempts) {
+                isLocked = true;
+                msg.innerHTML   = "Account Locked! Too many failed attempts.";
+                msg.style.color = "#f87171";
+                document.getElementById("loginBtn").disabled  = true;
+                document.getElementById("username").disabled  = true;
+                document.getElementById("password").disabled  = true;
+            } else {
+                msg.innerHTML   = "Invalid username or password. " + remaining + " attempt" + (remaining > 1 ? "s" : "") + " remaining.";
+                msg.style.color = "#f87171";
+            }
+        }
+    }
+
+    function logout() {
+        attempts = 0;
+        isLocked = false;
+        document.getElementById("username").value    = "";
+        document.getElementById("password").value    = "";
+        document.getElementById("username").disabled = false;
+        document.getElementById("password").disabled = false;
+        document.getElementById("loginBtn").disabled = false;
+        document.getElementById("message").innerHTML = "";
+        document.getElementById("welcomePage").classList.remove("active");
+        document.getElementById("loginPage").classList.add("active");
+    }
+
+    function togglePassword() {
+        var pwd  = document.getElementById("password");
+        var icon = document.getElementById("eyeIcon");
+        if (pwd.type === "password") {
+            pwd.type = "text";
+            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.477 0-8.268-2.943-9.542-7a9.956 9.956 0 012.293-3.95M6.696 6.697A9.944 9.944 0 0112 5c4.477 0 8.268 2.943 9.542 7a9.97 9.97 0 01-4.038 5.127M15 12a3 3 0 11-4.243-4.243M3 3l18 18"/>';
+        } else {
+            pwd.type = "password";
+            icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>';
+        }
+    }
+
+    document.addEventListener("keydown", function(e) {
+        if (e.key === "Enter") login();
+    });
+</script>
+
+</body>
+</html>
